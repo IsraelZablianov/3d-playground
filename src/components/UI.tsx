@@ -1,6 +1,6 @@
 import { type ShapeType } from '../App'
 import { HexColorPicker } from "react-colorful" // I need to install this or build a simple one
-import { Palette, Hand, Heart, Flower, Rocket, Orbit, Galaxy } from 'lucide-react'
+import { Palette, Hand, Heart, Flower, Rocket, Orbit, Sparkles } from 'lucide-react'
 import { useState } from 'react'
 
 // I will assume I need to install react-colorful or just use a standard input type color for simplicity first, 
@@ -27,7 +27,7 @@ export function UI({ currentShape, setShape, currentColor, setColor }: UIProps) 
     { id: 'saturn', icon: <Orbit size={20} />, label: 'Saturn' },
     { id: 'buddha', icon: <Hand size={20} />, label: 'Buddha' }, // Hand icon as proxy
     { id: 'fireworks', icon: <Rocket size={20} />, label: 'Fireworks' },
-    { id: 'solarsystem', icon: <Galaxy size={20} />, label: 'Galaxy' },
+    { id: 'solarsystem', icon: <Sparkles size={20} />, label: 'Galaxy' },
   ]
 
   return (
