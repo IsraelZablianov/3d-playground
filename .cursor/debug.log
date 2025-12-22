@@ -1,0 +1,29 @@
+{"location":"HandController.tsx:startWebcam","message":"Starting webcam request","data":{"isActive":true},"timestamp":1766440835814,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:startWebcam:error","message":"Webcam error","data":{"name":"NotAllowedError","message":"Permission denied","isActiveRef":true},"timestamp":1766440835818,"sessionId":"debug-session","hypothesisId":"A"}
+{"location":"HandController.tsx:setupHandLandmarker","message":"Starting setup","data":{"isActive":true},"timestamp":1766440840185,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:startWebcam","message":"Starting webcam request","data":{"isActive":true},"timestamp":1766440840258,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:startWebcam:error","message":"Webcam error","data":{"name":"NotAllowedError","message":"Permission denied","isActiveRef":true},"timestamp":1766440840259,"sessionId":"debug-session","hypothesisId":"A"}
+{"location":"HandController.tsx:setupHandLandmarker","message":"Starting setup","data":{"isActive":true},"timestamp":1766440845035,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:startWebcam","message":"Starting webcam request","data":{"isActive":true},"timestamp":1766440845115,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:startWebcam:error","message":"Webcam error","data":{"name":"NotAllowedError","message":"Permission denied","isActiveRef":true},"timestamp":1766440845119,"sessionId":"debug-session","hypothesisId":"A"}
+{"location":"HandController.tsx:useEffect:cleanup","message":"Cleanup triggered","data":{},"timestamp":1766440851407,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:setupHandLandmarker","message":"Starting setup","data":{"isActive":true},"timestamp":1766440851573,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:startWebcam","message":"Starting webcam request","data":{"isActive":true},"timestamp":1766440851647,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:startWebcam:error","message":"Webcam error","data":{"name":"NotAllowedError","message":"Permission denied","isActiveRef":true},"timestamp":1766440851649,"sessionId":"debug-session","hypothesisId":"A"}
+{"location":"HandController.tsx:useEffect:cleanup","message":"Cleanup triggered","data":{},"timestamp":1766440900692,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:setupHandLandmarker","message":"Starting setup","data":{"isActive":true},"timestamp":1766440900853,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:startWebcam","message":"Starting webcam request","data":{"isActive":true},"timestamp":1766440900931,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:startWebcam:error","message":"Webcam error","data":{"name":"NotAllowedError","message":"Permission denied","isActiveRef":true},"timestamp":1766440900934,"sessionId":"debug-session","hypothesisId":"A"}
+{"location":"HandController.tsx:useEffect:cleanup","message":"Cleanup triggered","data":{},"timestamp":1766440905551,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:setupHandLandmarker","message":"Starting setup","data":{"isActive":true},"timestamp":1766440905714,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:startWebcam","message":"Starting webcam request","data":{"isActive":true},"timestamp":1766440905784,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:startWebcam:error","message":"Webcam error","data":{"name":"NotAllowedError","message":"Permission denied","isActiveRef":true},"timestamp":1766440905786,"sessionId":"debug-session","hypothesisId":"A"}
+{"location":"HandController.tsx:setupHandLandmarker","message":"Starting setup","data":{"isActive":true},"timestamp":1766440951417,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:useEffect:cleanup","message":"Cleanup triggered","data":{},"timestamp":1766440951417,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:setupHandLandmarker","message":"Starting setup","data":{"isActive":true},"timestamp":1766440951417,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:startWebcam","message":"Starting webcam request","data":{"isActive":true},"timestamp":1766440951599,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:startWebcam:success","message":"Webcam success","data":{"id":"a6642e87-2aeb-46d4-9e76-9e1aeafab8b8","active":true,"tracks":1,"isActiveRef":true},"timestamp":1766440952896,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:useEffect:cleanup","message":"Cleanup triggered","data":{},"timestamp":1766440953325,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:setupHandLandmarker","message":"Starting setup","data":{"isActive":true},"timestamp":1766440953329,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:startWebcam","message":"Starting webcam request","data":{"isActive":true},"timestamp":1766440953424,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"HandController.tsx:startWebcam:success","message":"Webcam success","data":{"id":"dc8fd070-7fa8-4bb7-875e-03790baf7b9f","active":true,"tracks":1,"isActiveRef":true},"timestamp":1766440953608,"sessionId":"debug-session","hypothesisId":"B"}
