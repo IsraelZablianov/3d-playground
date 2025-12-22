@@ -26,21 +26,8 @@ const getSpherePoint = () => {
 
 // Heart Shape
 const getHeartPoint = () => {
-  // 3D Heart approximation
-  const x = (Math.random() * 2 - 1) * 3 // Spread x slightly
-  // Using a volume rejection sampling or specific parametric?
-  // Let's use parametric for surface
-  const u = Math.random() * Math.PI * 2
-  const v = Math.random() * Math.PI
-  
-  // A simple 3D heart formula
-  // (x^2 + 9/4y^2 + z^2 - 1)^3 - x^2z^3 - 9/80y^2z^3 = 0
-  // Too complex to sample uniformly easily.
-  
-  // Let's use 2D heart extruded/rotated or noise.
-  // Parametric:
+  // 3D Heart approximation using parametric equation
   const t = Math.random() * Math.PI * 2
-  const r = 0.1
   const hx = 16 * Math.pow(Math.sin(t), 3)
   const hy = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)
   const hz = (Math.random() * 2 - 1) * 4 // Thickness
@@ -116,6 +103,62 @@ const getFireworksPoint = () => {
     return p.multiplyScalar(Math.random() * 2 + 0.5)
 }
 
+// Solar System (Galaxy)
+const getSolarSystemPoint = (i: number) => {
+    const totalParticles = COUNT
+    
+    // Sun (center bright star) - 1%
+    if (i < totalParticles * 0.01) {
+        const p = getSpherePoint()
+        return p.multiplyScalar(Math.random() * 0.3)
+    }
+    
+    // Planets (8 orbital rings) - 10%
+    if (i < totalParticles * 0.11) {
+        const planetIndex = Math.floor((i - totalParticles * 0.01) / (totalParticles * 0.01))
+        const orbitRadius = 0.5 + planetIndex * 0.4
+        const theta = Math.random() * Math.PI * 2
+        const phi = (Math.random() - 0.5) * 0.2 // Slight thickness
+        
+        return new THREE.Vector3(
+            orbitRadius * Math.cos(theta),
+            phi,
+            orbitRadius * Math.sin(theta)
+        )
+    }
+    
+    // Asteroid belt - 15%
+    if (i < totalParticles * 0.26) {
+        const theta = Math.random() * Math.PI * 2
+        const r = 3.5 + Math.random() * 0.8
+        const y = (Math.random() - 0.5) * 0.4
+        
+        return new THREE.Vector3(
+            r * Math.cos(theta),
+            y,
+            r * Math.sin(theta)
+        )
+    }
+    
+    // Spiral galaxy arms - 74%
+    // Using logarithmic spiral: r = a * e^(b*theta)
+    const arm = Math.floor(Math.random() * 3) // 3 spiral arms
+    const t = Math.random() * Math.PI * 4 // Multiple rotations
+    const theta = t + (arm * Math.PI * 2 / 3) // Offset each arm by 120 degrees
+    
+    const a = 0.5
+    const b = 0.3
+    const r = a * Math.exp(b * t) + Math.random() * 0.5 // Add some noise
+    
+    const y = (Math.random() - 0.5) * 0.3 * (1 - t / (Math.PI * 4)) // Thinner towards edges
+    
+    return new THREE.Vector3(
+        r * Math.cos(theta),
+        y,
+        r * Math.sin(theta)
+    )
+}
+
 
 export function ParticleSystem({ shape, color, expansion, rotation }: ParticleSystemProps) {
   const pointsRef = useRef<THREE.Points>(null)
@@ -154,6 +197,7 @@ export function ParticleSystem({ shape, color, expansion, rotation }: ParticleSy
         case 'saturn': p = getSaturnPoint(i); break;
         case 'buddha': p = getBuddhaPoint(); break;
         case 'fireworks': p = getFireworksPoint(); break;
+        case 'solarsystem': p = getSolarSystemPoint(i); break;
         default: p = getSpherePoint(); break;
       }
       

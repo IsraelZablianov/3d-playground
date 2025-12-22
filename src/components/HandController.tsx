@@ -4,9 +4,10 @@ import { FilesetResolver, HandLandmarker, DrawingUtils } from '@mediapipe/tasks-
 interface HandControllerProps {
   onExpansionChange: (value: number) => void
   onSwipe: (direction: 'left' | 'right') => void
+  onHandPosition: (x: number, y: number) => void
 }
 
-export function HandController({ onExpansionChange, onSwipe }: HandControllerProps) {
+export function HandController({ onExpansionChange, onSwipe, onHandPosition }: HandControllerProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -201,7 +202,20 @@ export function HandController({ onExpansionChange, onSwipe }: HandControllerPro
 
           onExpansionChange(expansionValue)
 
-          // 2. Detect Swipe
+          // 2. Track hand position for camera movement (using primary hand centroid)
+          if (results.landmarks.length > 0) {
+            const hand = results.landmarks[0]
+            const centroidX = hand[9].x // Middle finger mcp (normalized 0-1)
+            const centroidY = hand[9].y // Middle finger mcp (normalized 0-1)
+            
+            // Map from 0-1 to -1 to 1 (centered)
+            const normalizedX = (centroidX - 0.5) * 2
+            const normalizedY = (centroidY - 0.5) * 2
+            
+            onHandPosition(normalizedX, -normalizedY) // Invert Y for natural movement
+          }
+
+          // 3. Detect Swipe
           if (results.landmarks.length > 0) {
             const hand = results.landmarks[0]
             const centroidX = hand[9].x // Middle finger mcp
@@ -226,6 +240,8 @@ export function HandController({ onExpansionChange, onSwipe }: HandControllerPro
             lastHandX.current = null
             // Reset expansion to 0 when hands are lost to prevent "stuck" state
             onExpansionChange(0)
+            // Reset hand position to center
+            onHandPosition(0, 0)
         }
       }
       
@@ -243,7 +259,7 @@ export function HandController({ onExpansionChange, onSwipe }: HandControllerPro
         stream.getTracks().forEach(track => track.stop())
       }
     }
-  }, [onExpansionChange, onSwipe])
+  }, [onExpansionChange, onSwipe, onHandPosition])
 
   return (
     <>

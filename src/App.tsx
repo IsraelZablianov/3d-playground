@@ -4,16 +4,21 @@ import { Experience } from './components/Experience'
 import { UI } from './components/UI'
 import { HandController } from './components/HandController'
 
-export type ShapeType = 'heart' | 'flower' | 'saturn' | 'buddha' | 'fireworks'
+export type ShapeType = 'heart' | 'flower' | 'saturn' | 'buddha' | 'fireworks' | 'solarsystem'
 
 function App() {
   const [shape, setShape] = useState<ShapeType>('heart')
   const [color, setColor] = useState('#ff0055')
   const [expansion, setExpansion] = useState(0) // 0 to 1 controlled by hands
   const [rotation, setRotation] = useState(0)
+  const [handPosition, setHandPosition] = useState({ x: 0, y: 0 }) // For solar system camera movement
   
   const handleExpansionChange = useCallback((value: number) => {
     setExpansion(value)
+  }, [])
+  
+  const handleHandPosition = useCallback((x: number, y: number) => {
+    setHandPosition({ x, y })
   }, [])
   
   const handleSwipe = useCallback((direction: 'left' | 'right') => {
@@ -37,14 +42,16 @@ function App() {
             shape={shape} 
             color={color} 
             expansion={expansion} 
-            rotation={rotation} 
+            rotation={rotation}
+            handPosition={handPosition}
           />
         </Canvas>
       </div>
       
       <HandController 
         onExpansionChange={handleExpansionChange} 
-        onSwipe={handleSwipe} 
+        onSwipe={handleSwipe}
+        onHandPosition={handleHandPosition}
       />
       
       <UI 

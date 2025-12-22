@@ -1,6 +1,6 @@
 import { type ShapeType } from '../App'
 import { HexColorPicker } from "react-colorful" // I need to install this or build a simple one
-import { Palette, Hand, Heart, Flower, Rocket, Orbit } from 'lucide-react'
+import { Palette, Hand, Heart, Flower, Rocket, Orbit, Galaxy } from 'lucide-react'
 import { useState } from 'react'
 
 // I will assume I need to install react-colorful or just use a standard input type color for simplicity first, 
@@ -18,8 +18,8 @@ export function UI({ currentShape, setShape, currentColor, setColor }: UIProps) 
   const [showColorPicker, setShowColorPicker] = useState(false)
   
   // Version tracker - update this with each change
-  const VERSION = "v1.0.1 - Fixed HandController remounting + rotation stuck at 0"
-  const TIMESTAMP = "Dec 23, 2025 - 22:45"
+  const VERSION = "v1.1.0 - Added Solar System (Galaxy) mode with hand movement"
+  const TIMESTAMP = "Dec 23, 2025 - 23:15"
 
   const shapes: { id: ShapeType; icon: React.ReactNode; label: string }[] = [
     { id: 'heart', icon: <Heart size={20} />, label: 'Heart' },
@@ -27,6 +27,7 @@ export function UI({ currentShape, setShape, currentColor, setColor }: UIProps) 
     { id: 'saturn', icon: <Orbit size={20} />, label: 'Saturn' },
     { id: 'buddha', icon: <Hand size={20} />, label: 'Buddha' }, // Hand icon as proxy
     { id: 'fireworks', icon: <Rocket size={20} />, label: 'Fireworks' },
+    { id: 'solarsystem', icon: <Galaxy size={20} />, label: 'Galaxy' },
   ]
 
   return (
@@ -98,8 +99,17 @@ export function UI({ currentShape, setShape, currentColor, setColor }: UIProps) 
       {/* Instructions */}
       <div style={{ position: 'absolute', top: 40, left: 40, color: 'rgba(255,255,255,0.6)', maxWidth: 300 }}>
         <h3>Interactive Particles</h3>
-        <p>👋 <b>Two hands</b> to scale/expand</p>
-        <p>💨 <b>Swipe</b> to rotate</p>
+        {currentShape === 'solarsystem' ? (
+          <>
+            <p>🌌 <b>Move hand</b> to explore galaxy</p>
+            <p>👋 <b>Two hands</b> to scale</p>
+          </>
+        ) : (
+          <>
+            <p>👋 <b>Two hands</b> to scale/expand</p>
+            <p>💨 <b>Swipe</b> to rotate</p>
+          </>
+        )}
       </div>
       
       {/* Version Tracker */}
