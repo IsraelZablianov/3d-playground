@@ -5,14 +5,26 @@ interface HandControllerProps {
   onExpansionChange: (value: number) => void
   onSwipe: (direction: 'left' | 'right') => void
   onHandPosition: (x: number, y: number) => void
+  onHandVelocity?: (vx: number, vy: number) => void
+  onHandActive?: (active: boolean) => void // Track if hand is detected
 }
 
-export function HandController({ onExpansionChange, onSwipe, onHandPosition }: HandControllerProps) {
+export function HandController({ onExpansionChange, onSwipe, onHandPosition, onHandVelocity, onHandActive }: HandControllerProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isLoaded, setIsLoaded] = useState(false)
   const lastHandX = useRef<number | null>(null)
   const swipeCooldown = useRef(false)
+  
+  // Enhanced tracking state
+  const smoothedPosition = useRef({ x: 0, y: 0 })
+  const lastPosition = useRef({ x: 0, y: 0, timestamp: 0 })
+  const velocity = useRef({ x: 0, y: 0 })
+  
+  // Smoothing and tracking constants
+  const SMOOTHING_FACTOR = 0.3 // Lower = smoother but more lag
+  const DEADZONE = 0.02 // Ignore movements smaller than this
+  const MAX_VELOCITY = 5 // Clamp velocity to prevent jumps
 
   useEffect(() => {
     let handLandmarker: HandLandmarker | null = null
@@ -137,8 +149,8 @@ export function HandController({ onExpansionChange, onSwipe, onHandPosition }: H
         ctx.fillRect(10, 10, 10, 10)
         
         if (results.landmarks && results.landmarks.length > 0) {
-            // Log once every 100 frames to avoid spam, or just use visual debug
-            // console.log("Hands detected:", results.landmarks.length)
+            // Hand detected - notify parent
+            onHandActive?.(true)
             
           const drawingUtils = new DrawingUtils(ctx)
           for (const landmarks of results.landmarks) {
@@ -202,17 +214,62 @@ export function HandController({ onExpansionChange, onSwipe, onHandPosition }: H
 
           onExpansionChange(expansionValue)
 
-          // 2. Track hand position for camera movement (using primary hand centroid)
+          // 2. Track hand position for camera movement (using palm center for stability)
           if (results.landmarks.length > 0) {
             const hand = results.landmarks[0]
-            const centroidX = hand[9].x // Middle finger mcp (normalized 0-1)
-            const centroidY = hand[9].y // Middle finger mcp (normalized 0-1)
+            
+            // Use palm center (average of multiple palm landmarks for stability)
+            const palmLandmarks = [0, 1, 5, 9, 13, 17] // Wrist and base of fingers
+            let palmX = 0
+            let palmY = 0
+            for (const idx of palmLandmarks) {
+              palmX += hand[idx].x
+              palmY += hand[idx].y
+            }
+            palmX /= palmLandmarks.length
+            palmY /= palmLandmarks.length
             
             // Map from 0-1 to -1 to 1 (centered)
-            const normalizedX = (centroidX - 0.5) * 2
-            const normalizedY = (centroidY - 0.5) * 2
+            const rawX = (palmX - 0.5) * 2
+            const rawY = (palmY - 0.5) * 2
             
-            onHandPosition(normalizedX, -normalizedY) // Invert Y for natural movement
+            // Apply deadzone to prevent drift
+            const deltaX = rawX - smoothedPosition.current.x
+            const deltaY = rawY - smoothedPosition.current.y
+            
+            if (Math.abs(deltaX) > DEADZONE || Math.abs(deltaY) > DEADZONE) {
+              // Apply exponential smoothing
+              smoothedPosition.current.x += deltaX * SMOOTHING_FACTOR
+              smoothedPosition.current.y += deltaY * SMOOTHING_FACTOR
+            }
+            
+            // Calculate velocity for momentum-based movement
+            const currentTime = performance.now()
+            if (lastPosition.current.timestamp > 0) {
+              const dt = (currentTime - lastPosition.current.timestamp) / 1000 // Convert to seconds
+              if (dt > 0) {
+                const vx = (smoothedPosition.current.x - lastPosition.current.x) / dt
+                const vy = (smoothedPosition.current.y - lastPosition.current.y) / dt
+                
+                // Clamp velocity to prevent jumps
+                velocity.current.x = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, vx))
+                velocity.current.y = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, vy))
+                
+                // Send velocity to parent if callback provided
+                if (onHandVelocity) {
+                  onHandVelocity(velocity.current.x, velocity.current.y)
+                }
+              }
+            }
+            
+            lastPosition.current = {
+              x: smoothedPosition.current.x,
+              y: smoothedPosition.current.y,
+              timestamp: currentTime
+            }
+            
+            // Send smoothed position (invert Y for natural movement)
+            onHandPosition(smoothedPosition.current.x, -smoothedPosition.current.y)
           }
 
           // 3. Detect Swipe
@@ -237,11 +294,27 @@ export function HandController({ onExpansionChange, onSwipe, onHandPosition }: H
             lastHandX.current = centroidX
           }
         } else {
+            // No hands detected - notify parent
+            onHandActive?.(false)
+            
             lastHandX.current = null
             // Reset expansion to 0 when hands are lost to prevent "stuck" state
             onExpansionChange(0)
-            // Reset hand position to center
-            onHandPosition(0, 0)
+            // Reset hand position to center with smoothing
+            smoothedPosition.current.x *= 0.9
+            smoothedPosition.current.y *= 0.9
+            if (Math.abs(smoothedPosition.current.x) < 0.01 && Math.abs(smoothedPosition.current.y) < 0.01) {
+              smoothedPosition.current.x = 0
+              smoothedPosition.current.y = 0
+            }
+            onHandPosition(smoothedPosition.current.x, smoothedPosition.current.y)
+            
+            // Reset velocity
+            velocity.current.x = 0
+            velocity.current.y = 0
+            if (onHandVelocity) {
+              onHandVelocity(0, 0)
+            }
         }
       }
       
@@ -259,7 +332,7 @@ export function HandController({ onExpansionChange, onSwipe, onHandPosition }: H
         stream.getTracks().forEach(track => track.stop())
       }
     }
-  }, [onExpansionChange, onSwipe, onHandPosition])
+  }, [onExpansionChange, onSwipe, onHandPosition, onHandVelocity, onHandActive])
 
   return (
     <>

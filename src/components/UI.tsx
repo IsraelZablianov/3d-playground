@@ -1,25 +1,19 @@
-import { type ShapeType } from '../App'
-import { HexColorPicker } from "react-colorful" // I need to install this or build a simple one
-import { Palette, Hand, Heart, Flower, Rocket, Orbit, Sparkles } from 'lucide-react'
-import { useState } from 'react'
-
-// I will assume I need to install react-colorful or just use a standard input type color for simplicity first, 
-// but user asked for "modern" so a custom one is better. I'll stick to input type color for now to save deps or add it.
-// Actually, I'll use a simple list of preset colors + native picker.
+import { type ShapeType, type ViewMode } from '../App'
+import { Palette, Hand, Heart, Flower, Rocket, Orbit, Sparkles, Sun, LayoutGrid } from 'lucide-react'
 
 interface UIProps {
   currentShape: ShapeType
   setShape: (shape: ShapeType) => void
   currentColor: string
   setColor: (color: string) => void
+  viewMode: ViewMode
+  setViewMode: (mode: ViewMode) => void
 }
 
-export function UI({ currentShape, setShape, currentColor, setColor }: UIProps) {
-  const [showColorPicker, setShowColorPicker] = useState(false)
-  
+export function UI({ currentShape, setShape, currentColor, setColor, viewMode, setViewMode }: UIProps) {
   // Version tracker - update this with each change
-  const VERSION = "v1.1.0 - Added Solar System (Galaxy) mode with hand movement"
-  const TIMESTAMP = "Dec 23, 2025 - 23:15"
+  const VERSION = "v3.1.0 - Showcase Mode!"
+  const TIMESTAMP = "Dec 24, 2025 - 02:00"
 
   const shapes: { id: ShapeType; icon: React.ReactNode; label: string }[] = [
     { id: 'heart', icon: <Heart size={20} />, label: 'Heart' },
@@ -28,6 +22,7 @@ export function UI({ currentShape, setShape, currentColor, setColor }: UIProps) 
     { id: 'buddha', icon: <Hand size={20} />, label: 'Buddha' }, // Hand icon as proxy
     { id: 'fireworks', icon: <Rocket size={20} />, label: 'Fireworks' },
     { id: 'solarsystem', icon: <Sparkles size={20} />, label: 'Galaxy' },
+    { id: 'realsolar', icon: <Sun size={20} />, label: 'Solar System' },
   ]
 
   return (
@@ -99,7 +94,21 @@ export function UI({ currentShape, setShape, currentColor, setColor }: UIProps) 
       {/* Instructions */}
       <div style={{ position: 'absolute', top: 40, left: 40, color: 'rgba(255,255,255,0.6)', maxWidth: 300 }}>
         <h3>Interactive Particles</h3>
-        {currentShape === 'solarsystem' ? (
+        {currentShape === 'realsolar' && viewMode === 'showcase' ? (
+          <>
+            <p>🌍 <b>Showcase Mode</b> - All planets displayed</p>
+            <p>🎹 <b>Press M</b> to return to Solar System</p>
+            <p style={{ fontSize: 11, opacity: 0.7, marginTop: 4 }}>💡 Review each planet's appearance</p>
+          </>
+        ) : currentShape === 'realsolar' ? (
+          <>
+            <p>✋ <b>ONE hand left/right/up/down</b> → Fly that direction</p>
+            <p>🤲 <b>TWO hands apart</b> → Fly forward</p>
+            <p>🤲 <b>TWO hands together</b> → Fly backward</p>
+            <p>🎹 <b>Press M</b> to enter Showcase Mode</p>
+            <p style={{ fontSize: 11, opacity: 0.7, marginTop: 4 }}>💡 Camera rotates to face flight direction</p>
+          </>
+        ) : currentShape === 'solarsystem' ? (
           <>
             <p>🌌 <b>Move hand</b> to explore galaxy</p>
             <p>👋 <b>Two hands</b> to scale</p>
@@ -111,6 +120,31 @@ export function UI({ currentShape, setShape, currentColor, setColor }: UIProps) 
           </>
         )}
       </div>
+      
+      {/* Showcase Mode Toggle Button (only show in Solar System mode) */}
+      {currentShape === 'realsolar' && (
+        <div style={{ position: 'absolute', top: 140, right: 40 }}>
+          <button
+            onClick={() => setViewMode(viewMode === 'normal' ? 'showcase' : 'normal')}
+            style={{
+              background: viewMode === 'showcase' ? 'rgba(255,200,0,0.3)' : 'rgba(255,255,255,0.1)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              borderRadius: 8,
+              padding: '12px 16px',
+              color: 'white',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              transition: 'all 0.2s',
+              fontWeight: 600
+            }}
+          >
+            <LayoutGrid size={20} />
+            <span>{viewMode === 'showcase' ? 'Normal View' : 'Showcase Mode'}</span>
+          </button>
+        </div>
+      )}
       
       {/* Version Tracker */}
       <div style={{ 
